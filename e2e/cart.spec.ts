@@ -79,6 +79,7 @@ test.describe('carrinho', () => {
     await login(page, ANA);
     await addToCart(page);
     await page.getByRole('button', { name: 'Sair' }).click();
+    await expect(page.getByRole('link', { name: 'Entrar' })).toBeVisible();
     await login(page, 'bruno@onyx.test');
     await page.goto('/cart');
     await expect(page.getByText('Seu carrinho está vazio')).toBeVisible();
