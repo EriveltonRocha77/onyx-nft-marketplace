@@ -43,6 +43,9 @@ export interface OrderRecord extends Order {
   userId: string;
   /** Instante em que o processador simulado resolve o pedido. */
   resolveAt: string | null;
+  /** Resultado decidido na criação (cenário vigente naquele momento). */
+  outcome: 'confirmed' | 'declined';
+  idempotencyKey: string;
 }
 
 export interface QuoteRecord extends Quote {

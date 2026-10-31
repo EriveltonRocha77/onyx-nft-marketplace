@@ -1,5 +1,6 @@
 import { setupWorker } from 'msw/browser';
 import { mockControl, type MockControl } from './control';
+import { settleOrders } from './domain/orders';
 import { handlers } from './handlers';
 import { isScenarioName } from './scenarios/presets';
 import { setScenario } from './scenarios/engine';
@@ -28,6 +29,7 @@ function initialScenario() {
 export async function startMocks(): Promise<void> {
   setScenario(initialScenario());
   window.__mock = mockControl;
+  settleOrders(); // pedidos pendentes de uma carga anterior continuam de onde pararam
   const worker = setupWorker(...handlers);
   await worker.start({ onUnhandledRequest: 'bypass', quiet: true, serviceWorker: { url: '/mockServiceWorker.js' } });
 }

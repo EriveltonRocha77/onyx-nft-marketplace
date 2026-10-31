@@ -53,6 +53,10 @@ export function loadDraft(userId: string, key: string): unknown {
   } catch { return null; }
 }
 
+export function removeDraft(userId: string, key: string): void {
+  try { sessionStorage.removeItem(draftKey(userId, key)); } catch { /* ignora */ }
+}
+
 export function clearDrafts(exceptUserId?: string): void {
   try {
     for (const k of Object.keys(sessionStorage)) {

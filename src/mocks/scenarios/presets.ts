@@ -6,6 +6,7 @@ const base: ScenarioConfig = {
   payment: 'confirmed',
   paymentDelayMs: 1500,
   orderTimeout: false,
+  orderTimeoutDelayMs: 15_000,
   walletRefused: false,
   emptyCatalog: false,
   offline: false,

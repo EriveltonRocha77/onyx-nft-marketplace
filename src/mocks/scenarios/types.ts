@@ -22,6 +22,8 @@ export interface ScenarioConfig {
   payment: 'confirmed' | 'declined';
   paymentDelayMs: number;
   orderTimeout: boolean;
+  /** Quanto o servidor demora a responder após criar o pedido no cenário `order-timeout`. */
+  orderTimeoutDelayMs: number;
   walletRefused: boolean;
   emptyCatalog: boolean;
   offline: boolean;

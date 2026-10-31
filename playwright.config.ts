@@ -42,8 +42,8 @@ export default defineConfig({
   ],
   webServer: {
     command: useBuild
-      ? `VITE_MOCKS=on pnpm exec vite build && pnpm exec vite preview --port ${port} --strictPort`
-      : `VITE_MOCKS=on pnpm exec vite --port ${port} --strictPort`,
+      ? `VITE_MOCKS=on VITE_API_TIMEOUT_MS=5000 pnpm exec vite build && pnpm exec vite preview --port ${port} --strictPort`
+      : `VITE_MOCKS=on VITE_API_TIMEOUT_MS=5000 pnpm exec vite --port ${port} --strictPort`,
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

@@ -32,6 +32,7 @@ export function Header() {
       <Link to="/" className={navLink} activeOptions={{ exact: true, includeSearch: false }}>{t('nav.home')}</Link>
       {status === 'authenticated' ? <Link to="/" search={{ favorites: true }} className={navLink}>Favoritos</Link> : null}
       {status === 'authenticated' ? <Link to="/profile" className={navLink}>Perfil</Link> : null}
+      {status === 'authenticated' ? <Link to="/wallets" className={navLink}>Carteiras</Link> : null}
     </>
   );
 

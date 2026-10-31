@@ -1,4 +1,5 @@
 import type { MockDb } from './store';
+import { clearOrderTimers } from './domain/orders';
 import { getDb, mutate, resetDb } from './store';
 import { delayNext, failNext, setLatency, setScenario } from './scenarios/engine';
 import type { FailureResponse, LatencyRule, ScenarioConfig, ScenarioName } from './scenarios/types';
@@ -16,6 +17,7 @@ export interface MockControl {
 export const mockControl: MockControl = {
   setScenario,
   reset(scenario = 'default') {
+    clearOrderTimers();
     resetDb();
     setScenario(scenario);
   },

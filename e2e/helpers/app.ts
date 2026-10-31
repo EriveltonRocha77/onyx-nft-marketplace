@@ -48,3 +48,33 @@ export async function addToCart(page: Page, nftId = 'nft-001', times = 1) {
     await expect(page.getByRole('link', { name: 'Ver carrinho' })).toBeVisible();
   }
 }
+
+export const CPF = '529.982.247-25';
+
+/** Estado dos mocks (somente leitura) para verificar o resultado das operações. */
+export async function mockState<T>(page: Page, pick: string): Promise<T> {
+  return page.evaluate((p) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = (window as any).__mock.getState() as Record<string, unknown>;
+    return JSON.parse(JSON.stringify(db[p]));
+  }, pick) as Promise<T>;
+}
+
+/** Login como Ana, um item no carrinho e abre o pagamento com dados válidos preenchidos. */
+export async function toCheckout(page: Page, opts: { connect?: boolean; nft?: string; qty?: number } = {}) {
+  await open(page, '/');
+  await login(page, ANA);
+  await addToCart(page, opts.nft ?? 'nft-001', opts.qty ?? 1);
+  await page.goto('/checkout');
+  await expect(page.getByLabel('CPF')).toBeVisible();
+  await page.getByLabel('CPF').fill(CPF);
+  if (opts.connect !== false) {
+    await page.getByRole('button', { name: 'Conectar', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible();
+  }
+}
+
+export async function review(page: Page) {
+  await page.getByRole('button', { name: 'Revisar pedido' }).click();
+  await expect(page.getByTestId('review')).toBeVisible();
+}
