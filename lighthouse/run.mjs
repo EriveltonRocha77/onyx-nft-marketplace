@@ -1,7 +1,7 @@
 // Uso: pnpm lighthouse  (faz o build com mocks ligados, sobe o preview e mede)
 // Env: CHROME_PATH para escolher o Chromium; LH_SKIP_BUILD=1 para reaproveitar dist/.
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import os from 'node:os';
 import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
@@ -24,7 +24,7 @@ const server = spawn('pnpm', ['exec', 'vite', 'preview', '--port', String(PORT),
 const stop = () => server.kill();
 process.on('exit', stop);
 for (let i = 0; i < 60; i++) {
-  try { if ((await fetch(base)).ok) break; } catch {}
+  try { if ((await fetch(base)).ok) break; } catch { /* servidor ainda subindo */ }
   await new Promise((r) => setTimeout(r, 500));
 }
 
