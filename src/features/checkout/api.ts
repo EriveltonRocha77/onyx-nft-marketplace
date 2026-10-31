@@ -3,6 +3,7 @@ import { api, parse } from '../../shared/api/client';
 import { ApiError, toApiError } from '../../shared/api/errors';
 import { queryKeys } from '../../shared/api/queryKeys';
 import { orderSchema, quoteSchema, type Network, type Order, type Quote } from '../../shared/api/schemas';
+import { getRealtimeStatus } from '../../shared/realtime/status';
 import { useSession } from '../auth/api';
 
 export interface CollectorInput { name: string; email: string; document: string }
@@ -42,7 +43,8 @@ export function useOrder(orderId: string) {
     queryKey: queryKeys.user(user?.id ?? 'anon').order(orderId),
     queryFn: async ({ signal }) => parse(orderSchema, (await api.get(`/orders/${encodeURIComponent(orderId)}`, { signal })).data),
     enabled: Boolean(user),
-    // enquanto pendente, confirma periodicamente pela API; estados terminais não são mais consultados
-    refetchInterval: (q) => (q.state.data?.status === 'pending' ? 1500 : false),
+    // Pendente: o evento order.updated é o caminho principal. A API é consultada como rede de segurança
+    // (devagar com o socket conectado, rápido sem ele). Estados terminais não são mais consultados.
+    refetchInterval: (q) => (q.state.data?.status === 'pending' ? (getRealtimeStatus() === 'connected' ? 10_000 : 1500) : false),
   });
 }

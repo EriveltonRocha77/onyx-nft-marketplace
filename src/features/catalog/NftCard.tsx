@@ -12,7 +12,7 @@ export function priceLabel(nft: Nft): string {
 export function NftCard({ nft, priority = false, testId = 'nft-card' }: { nft: Nft; priority?: boolean; testId?: string }) {
   const soldOut = nft.availableTotal === 0;
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:border-muted" data-testid={testId}>
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:border-muted" data-testid={testId} data-nft-id={nft.id}>
       <Link to="/nft/$nftId" params={{ nftId: nft.id }} className="flex flex-1 flex-col rounded-2xl after:absolute after:inset-0 after:content-['']">
         <img
           src={nft.images[0]}

@@ -1,6 +1,7 @@
 import { ws } from 'msw';
 import { toSocketIo } from '@mswjs/socket.io-binding';
 import type { RealtimeEvent } from '../../shared/api/schemas';
+import { onDomainEvent, type DomainEvent } from '../domain/events';
 import { getDb } from '../store';
 
 /**
@@ -34,7 +35,8 @@ export const socketHandler = link.addEventListener('connection', (connection) =>
     return;
   }
   if (blocked) {
-    connection.client.close(1011, 'indisponível');
+    // Servidor indisponível: o upgrade é aceito, mas o handshake nunca chega.
+    // O cliente descarta a tentativa pelo timeout de conexão e tenta de novo (ver createSocket).
     return;
   }
   let io: ReturnType<typeof toSocketIo> | null = null;
@@ -76,11 +78,14 @@ export const socketHandler = link.addEventListener('connection', (connection) =>
   });
 });
 
-/** Entrega um evento a clientes reais do socket.io-client. `userId: null` no envelope = difusão. */
-export function emitToUser(event: RealtimeEvent): number {
+/**
+ * Entrega um evento a clientes reais do socket.io-client. `userId: null` no envelope = difusão.
+ * Com `force`, ignora o filtro por usuário (usado só para testar o descarte no cliente).
+ */
+export function emitToUser(event: RealtimeEvent, force = false): number {
   let delivered = 0;
   for (const c of clients) {
-    if (event.userId !== null && c.userId !== event.userId) continue;
+    if (!force && event.userId !== null && c.userId !== event.userId) continue;
     c.emit(event.type, event);
     delivered += 1;
   }
@@ -100,3 +105,26 @@ export function disconnectAll(block = false): void {
 export function allowConnections(): void {
   blocked = false;
 }
+
+/** Monta o envelope versionado a partir do estado atual. O id é estável: o mesmo estado gera o mesmo id. */
+export function envelopeFor(e: DomainEvent): RealtimeEvent | null {
+  const db = getDb();
+  const occurredAt = new Date().toISOString();
+  if (e.kind === 'nft') {
+    const nft = db.nfts.find((n) => n.id === e.nftId);
+    if (!nft) return null;
+    return { id: `evt_nft_${nft.id}_v${nft.version}`, type: 'nft.updated', resource: { kind: 'nft', id: nft.id }, version: nft.version, occurredAt, userId: null, payload: { nft } };
+  }
+  const order = db.orders[e.orderId];
+  if (!order) return null;
+  return {
+    id: `evt_order_${order.id}_v${order.version}`, type: 'order.updated', resource: { kind: 'order', id: order.id }, version: order.version,
+    occurredAt, userId: order.userId, payload: { status: order.status, declineReason: order.declineReason },
+  };
+}
+
+/** Todo evento de domínio vira um evento Socket.IO — o mesmo estado que o REST devolve. */
+onDomainEvent((e) => {
+  const env = envelopeFor(e);
+  if (env) emitToUser(env);
+});

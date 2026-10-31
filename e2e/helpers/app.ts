@@ -25,18 +25,18 @@ export async function login(page: Page, email = ANA, password = PASSWORD) {
   await expect(page.getByRole('button', { name: 'Sair' })).toBeVisible();
 }
 
-type MockCall = 'setScenario' | 'failNext' | 'delayNext' | 'expireSession' | 'reset' | 'setLatency';
+type MockCall = 'setScenario' | 'failNext' | 'delayNext' | 'expireSession' | 'reset' | 'setLatency' | 'mutateNft' | 'emitCurrent' | 'emitRaw' | 'disconnectSocket' | 'reconnectSocket' | 'resolveOrder' | 'socketClients';
 
 /** Chama `window.__mock.<fn>(...args)` dentro da página (API de controle do mock). */
-export async function mock(page: Page, fn: MockCall, ...args: unknown[]): Promise<void> {
-  await page.evaluate(
+export async function mock<T = void>(page: Page, fn: MockCall, ...args: unknown[]): Promise<T> {
+  return page.evaluate(
     ([f, a]) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const control = (window as any).__mock as Record<string, (...x: unknown[]) => unknown>;
-      control[f as string]!(...(a as unknown[]));
+      return control[f as string]!(...(a as unknown[]));
     },
     [fn, args] as const,
-  );
+  ) as Promise<T>;
 }
 
 /** Adiciona o NFT ao carrinho pela tela de detalhe (edição padrão). */
@@ -77,4 +77,11 @@ export async function toCheckout(page: Page, opts: { connect?: boolean; nft?: st
 export async function review(page: Page) {
   await page.getByRole('button', { name: 'Revisar pedido' }).click();
   await expect(page.getByTestId('review')).toBeVisible();
+}
+
+/** Espera o cliente Socket.IO real estar conectado ao servidor simulado. */
+export async function socketReady(page: Page, userId: string | null = null) {
+  await expect
+    .poll(async () => (await mock<{ userId: string | null }[]>(page, 'socketClients').catch(() => [])).some((c) => c.userId === userId), { timeout: 10_000 })
+    .toBe(true);
 }

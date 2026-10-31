@@ -3,6 +3,7 @@ import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { Toaster } from 'sonner';
 import { NotFoundPage } from '../NotFoundPage';
 import { t } from '../../shared/i18n';
+import { ConnectionBanner } from '../../shared/layout/ConnectionBanner';
 import { FocusManager } from '../../shared/layout/FocusManager';
 import { Footer } from '../../shared/layout/Footer';
 import { Header } from '../../shared/layout/Header';
@@ -25,6 +26,7 @@ function RootLayout() {
       </a>
       <div className="flex min-h-screen flex-col">
         <Header />
+        <ConnectionBanner />
         <main id="conteudo" tabIndex={-1} className="mx-auto w-full max-w-[1280px] flex-1 px-4 py-6 outline-none sm:px-6">
           <Outlet />
         </main>

@@ -9,6 +9,7 @@ import { cn } from '../../shared/ui/cn';
 import { EmptyState, ErrorState } from '../../shared/ui/states';
 import { FavoriteButton } from '../favorites/FavoriteButton';
 import { useNft } from './api';
+import { useNftChanges } from './useNftChanges';
 import { PurchaseActions } from '../cart/PurchaseActions';
 import { EditionPicker } from './EditionPicker';
 import { Gallery } from './Gallery';
@@ -17,6 +18,7 @@ import { QuantityInput, quantityLimit } from './QuantityInput';
 
 export function NftDetailPage({ nftId }: { nftId: string }) {
   const nft = useNft(nftId);
+  const { notes, dismiss } = useNftChanges(nft.data);
   usePageTitle(nft.data?.name ?? 'NFT');
   const [pickedEdition, setPickedEdition] = useState<string>('');
   const [pickedQty, setPickedQty] = useState(1);
@@ -60,6 +62,12 @@ export function NftDetailPage({ nftId }: { nftId: string }) {
           </div>
           <FavoriteButton nftId={n.id} name={n.name} />
         </div>
+        {notes.length ? (
+          <div role="region" aria-label="Atualizações deste NFT" className="flex items-start justify-between gap-3 rounded-xl border border-warning/50 bg-warning/10 p-3 text-sm" data-testid="nft-changes">
+            <ul className="flex flex-col gap-1">{notes.map((x) => <li key={x}>{x}</li>)}</ul>
+            <button type="button" className="shrink-0 text-xs underline underline-offset-4" onClick={dismiss}>Entendi</button>
+          </div>
+        ) : null}
         <p className="text-muted">{n.description}</p>
         {n.editions.length > 1 ? <EditionPicker editions={n.editions} value={editionId} onChange={setPickedEdition} /> : null}
         <div className="flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-border bg-surface p-4">

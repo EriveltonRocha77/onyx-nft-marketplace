@@ -4,6 +4,7 @@ import { routeTree } from '../routeTree.gen';
 import { configureApi } from '../shared/api/client';
 import { getCartId } from '../features/cart/cartId';
 import { getToken, expireSession, safeRedirect } from '../features/auth/session';
+import { RealtimeProvider } from '../shared/realtime/RealtimeProvider';
 import { queryClient } from './queryClient';
 
 export const router = createRouter({
@@ -33,7 +34,9 @@ configureApi({
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <RealtimeProvider>
+        <RouterProvider router={router} />
+      </RealtimeProvider>
     </QueryClientProvider>
   );
 }

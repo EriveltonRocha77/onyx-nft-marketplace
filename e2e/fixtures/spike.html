@@ -11,7 +11,7 @@
   const { emitToUser, disconnectAll, allowConnections } = await import('/src/mocks/socket/handler.ts');
   const events = [];
   const log = [];
-  const socket = createSocket({ token: 'spike' });
+  const socket = createSocket({ getToken: () => 'spike' });
   socket.on('connect', () => log.push('connect'));
   socket.on('disconnect', (r) => log.push('disconnect:' + r));
   socket.on('nft.updated', (e) => events.push(e));
