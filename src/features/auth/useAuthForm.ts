@@ -7,7 +7,8 @@ export function useApiFormErrors<T extends FieldValues>(form: UseFormReturn<T>) 
   const [formError, setFormError] = useState<string | null>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
 
-  const focusSummary = () => setTimeout(() => summaryRef.current?.focus(), 0);
+  // o RHF foca o primeiro campo inválido logo após o onInvalid; o resumo precisa vir depois para ficar com o foco
+  const focusSummary = () => setTimeout(() => summaryRef.current?.focus(), 60);
 
   const handleApiError = (e: unknown): ApiError => {
     const err = toApiError(e);

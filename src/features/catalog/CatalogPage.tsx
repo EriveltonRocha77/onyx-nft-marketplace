@@ -65,7 +65,7 @@ export function CatalogPage({ raw }: { raw: RawSearch }) {
               {list.isFetching && !list.isPending ? <span className="ml-2 text-accent" data-testid="refreshing">Atualizando…</span> : null}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2">
               <label htmlFor="ordenar" className="text-sm text-muted">Ordenar por</label>
               <select id="ordenar" className="h-11 rounded-xl border border-border bg-surface px-3 text-sm" value={search.sort} onChange={(e) => setSearch({ sort: e.target.value as Sort })}>

@@ -23,7 +23,12 @@ const useBuild = process.env.E2E_DEV !== '1';
 export default defineConfig({
   testDir: './e2e',
   timeout: 45_000,
-  expect: { timeout: 8_000 },
+  expect: {
+    timeout: 8_000,
+    // Baselines versionadas, independentes de SO: as fontes vêm empacotadas (fontsource), então a renderização é estável.
+    toHaveScreenshot: { maxDiffPixelRatio: 0.02, animations: 'disabled', caret: 'hide' },
+  },
+  snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
