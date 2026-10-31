@@ -1,25 +1,21 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { routeTree } from './routeTree.gen';
 import './index.css';
 
-const router = createRouter({ routeTree });
-
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
-
+/**
+ * Os mocks (MSW) precisam estar ativos ANTES de qualquer módulo que capture
+ * `globalThis.WebSocket` (o engine.io-client faz isso ao ser importado). Por isso
+ * a aplicação é importada dinamicamente só depois de `startMocks()`.
+ */
 async function bootstrap(): Promise<void> {
   if (import.meta.env.VITE_MOCKS === 'on') {
     const { startMocks } = await import('./mocks/browser');
     await startMocks();
   }
+  const { App } = await import('./app/App');
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <App />
     </StrictMode>,
   );
 }

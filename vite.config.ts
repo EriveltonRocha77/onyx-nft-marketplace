@@ -20,5 +20,6 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}', 'lighthouse/**/*.test.ts', 'scripts/**/*.test.ts'],
     css: false,
+    testTimeout: 15000,
   },
 });

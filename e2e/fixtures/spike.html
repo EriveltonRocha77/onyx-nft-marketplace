@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><title>spike socket</title></head>
+<body>
+<pre id="out">carregando</pre>
+<script type="module">
+  // O engine.io-client captura globalThis.WebSocket ao ser importado: os mocks precisam
+  // estar ativos antes, por isso o socket é importado dinamicamente depois de startMocks().
+  const { startMocks } = await import('/src/mocks/browser.ts');
+  await startMocks();
+  const { createSocket } = await import('/src/shared/realtime/socket.ts');
+  const { emitToUser, disconnectAll, allowConnections } = await import('/src/mocks/socket/handler.ts');
+  const events = [];
+  const log = [];
+  const socket = createSocket({ token: 'spike' });
+  socket.on('connect', () => log.push('connect'));
+  socket.on('disconnect', (r) => log.push('disconnect:' + r));
+  socket.on('nft.updated', (e) => events.push(e));
+  window.__spike = { events, log, emitToUser, disconnectAll, allowConnections, socket };
+  document.getElementById('out').textContent = 'pronto';
+</script>
+</body></html>
