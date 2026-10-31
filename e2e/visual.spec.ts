@@ -12,7 +12,7 @@ async function settle(page: Page) {
     window.scrollTo(0, 0);
     await document.fonts.ready;
     // imagens fora da tela (ex.: carrossel de destaques) nunca disparam o carregamento preguiçoso
-    const pending = [...document.images].filter((i) => !i.complete);
+    const pending = Array.from(document.images).filter((i) => !i.complete);
     pending.forEach((i) => { i.loading = 'eager'; });
     await Promise.all(pending.map((i) => new Promise((r) => { i.onload = i.onerror = r; setTimeout(r, 5000); })));
   });
