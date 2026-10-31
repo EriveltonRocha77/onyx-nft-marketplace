@@ -9,6 +9,7 @@ import { cn } from '../../shared/ui/cn';
 import { EmptyState, ErrorState } from '../../shared/ui/states';
 import { FavoriteButton } from '../favorites/FavoriteButton';
 import { useNft } from './api';
+import { PurchaseActions } from '../cart/PurchaseActions';
 import { EditionPicker } from './EditionPicker';
 import { Gallery } from './Gallery';
 import { NftDetailSkeleton } from './NftDetailSkeleton';
@@ -69,7 +70,7 @@ export function NftDetailPage({ nftId }: { nftId: string }) {
           {soldOut ? <Badge tone="danger">Esgotado</Badge> : <Badge tone="accent">{edition?.available} disponíveis</Badge>}
         </div>
         <QuantityInput value={quantity} max={limit} onChange={setPickedQty} />
-        <div id="acao-compra" data-testid="purchase-slot" />
+        <PurchaseActions nft={n} editionId={editionId} quantity={quantity} disabled={soldOut} />
       </div>
     </article>
   );

@@ -4,6 +4,7 @@ import { api, parse } from '../../shared/api/client';
 import { toApiError } from '../../shared/api/errors';
 import { queryKeys } from '../../shared/api/queryKeys';
 import { authResponseSchema, sessionSchema } from '../../shared/api/schemas';
+import { mergeGuestCart } from '../cart/merge';
 import { beginSession, endSession, getToken, subscribeToken } from './session';
 
 export const sessionQuery = queryOptions({
@@ -37,9 +38,10 @@ function useAuthMutation<T>(path: string) {
         return parse(authResponseSchema, (await api.post(path, input)).data);
       } catch (e) { throw toApiError(e); }
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       beginSession(qc, data.token, data.session.user.id);
       qc.setQueryData(queryKeys.session(), data.session);
+      await mergeGuestCart(qc, data.session.user.id);
     },
   });
 }

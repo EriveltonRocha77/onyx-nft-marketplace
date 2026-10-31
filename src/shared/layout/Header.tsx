@@ -1,6 +1,7 @@
 import { Link, useRouter } from '@tanstack/react-router';
-import { Menu } from 'lucide-react';
+import { Menu, ShoppingBag } from 'lucide-react';
 import { useLogout, useSession } from '../../features/auth/api';
+import { useCartCount } from '../../features/cart/api';
 import { t } from '../i18n';
 import { Button, buttonVariants } from '../ui/button';
 import { cn } from '../ui/cn';
@@ -22,6 +23,7 @@ export function Header() {
   const { status, user } = useSession();
   const logout = useLogout();
   const router = useRouter();
+  const cartCount = useCartCount();
 
   const doLogout = () => logout.mutate(undefined, { onSettled: () => void router.navigate({ to: '/' }) });
 
@@ -29,6 +31,7 @@ export function Header() {
     <>
       <Link to="/" className={navLink} activeOptions={{ exact: true, includeSearch: false }}>{t('nav.home')}</Link>
       {status === 'authenticated' ? <Link to="/" search={{ favorites: true }} className={navLink}>Favoritos</Link> : null}
+      {status === 'authenticated' ? <Link to="/profile" className={navLink}>Perfil</Link> : null}
     </>
   );
 
@@ -39,6 +42,10 @@ export function Header() {
         <nav aria-label="Principal" className="ml-2 hidden items-center md:flex">{links}</nav>
         <SearchBox className="mx-2 hidden max-w-md flex-1 md:block" />
         <div className="ml-auto flex items-center gap-2">
+          <Link to="/cart" className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'relative')} aria-label={cartCount ? `Carrinho, ${cartCount} ${cartCount === 1 ? 'item' : 'itens'}` : 'Carrinho'} data-testid="cart-link">
+            <ShoppingBag aria-hidden="true" className="h-5 w-5" />
+            {cartCount ? <span aria-hidden="true" className="absolute -top-1 -right-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-xs font-semibold text-accent-foreground" data-testid="cart-count">{cartCount}</span> : null}
+          </Link>
           {status === 'authenticated' && user ? (
             <>
               <span className="hidden items-center gap-2 text-sm sm:flex" data-testid="user-name">

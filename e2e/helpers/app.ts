@@ -38,3 +38,13 @@ export async function mock(page: Page, fn: MockCall, ...args: unknown[]): Promis
     [fn, args] as const,
   );
 }
+
+/** Adiciona o NFT ao carrinho pela tela de detalhe (edição padrão). */
+export async function addToCart(page: Page, nftId = 'nft-001', times = 1) {
+  await page.goto(`/nft/${nftId}`);
+  const add = page.getByRole('button', { name: 'Adicionar ao carrinho' });
+  for (let i = 0; i < times; i++) {
+    await add.click();
+    await expect(page.getByRole('link', { name: 'Ver carrinho' })).toBeVisible();
+  }
+}
