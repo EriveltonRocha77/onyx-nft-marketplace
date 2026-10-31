@@ -24,3 +24,5 @@ Prova: `e2e/spike-socket.spec.ts` conecta, recebe `nft.updated`, sofre desconex�
 - Sem sincronização entre abas: cada aba tem seu service worker e seus clientes.
 - O binding não implementa rooms, namespaces nem broadcast. O isolamento por usuário é feito pelo handler, que só entrega
   eventos de pedido ao dono, e de novo no cliente.
+- Modo bloqueado: `__mock.disconnectSocket({ block: true })` faz o handshake nunca completar, o que simula servidor fora do ar.
+  O cliente usa `timeout: 4000` para não esperar para sempre e segue tentando reconectar; `reconnectSocket()` libera de novo.
