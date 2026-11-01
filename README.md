@@ -113,13 +113,16 @@ O banco fica em `localStorage` (`onyx:mock:v1`), então sobrevive a recarregamen
 | Tempo real cai | `__mock.disconnectSocket({ block: true })` mostra o aviso de reconexão; `__mock.reconnectSocket()` restaura e o app reconcilia. |
 | Item muda no detalhe | `__mock.mutateNft('nft-005', { price: '9.9' })` com a página aberta. |
 
-## Deploy no Cloudflare Pages
+## Deploy no Cloudflare
 
-1. Conecte o repositório no Cloudflare Pages.
-2. Build command: `pnpm build`. Output directory: `dist`.
-3. Variáveis: `VITE_MOCKS=on` (o app não tem back-end real) e, se quiser, `VITE_DEFAULT_SCENARIO`.
-4. `public/_redirects` já manda qualquer rota para `index.html` (SPA).
-5. O service worker do MSW (`mockServiceWorker.js`) é servido da raiz do site.
+O repositório traz `wrangler.jsonc`, que publica `dist/` como site estático. Rotas diretas e refresh funcionam porque `not_found_handling` está em `single-page-application`.
+
+1. No Cloudflare, conecte o repositório em Workers & Pages (Create, Connect to Git).
+2. Build command: `pnpm run build`. Deploy command: `npx wrangler deploy`.
+3. Variável de build: `VITE_MOCKS=on` (o app não tem back-end real). Se o build reclamar da versão do Node, use `NODE_VERSION=22`.
+4. O service worker do MSW (`mockServiceWorker.js`) é servido da raiz do site.
+
+Em Cloudflare Pages com upload direto, suba o conteúdo de `dist/` já compilado e inclua um arquivo `_redirects` com `/* /index.html 200`.
 
 ## Documentação
 
