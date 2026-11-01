@@ -21,7 +21,7 @@ O app abre em http://localhost:5173 com os mocks ligados.
 
 | Variável | Padrão | Função |
 |---|---|---|
-| `VITE_MOCKS` | `on` | `on` liga MSW (REST e Socket.IO). Qualquer outro valor usa a API real. |
+| `VITE_MOCKS` | `on` | Os mocks (MSW, REST e Socket.IO) ficam ligados por padrão. `off` desliga e usa a API real. |
 | `VITE_DEFAULT_SCENARIO` | `default` | Cenário inicial dos mocks. |
 | `VITE_API_BASE_URL` | `/api` | Base das chamadas REST. |
 | `VITE_SOCKET_URL` | vazio | URL do Socket.IO. Vazio usa a origem da página. |
@@ -119,7 +119,7 @@ O repositório traz `wrangler.jsonc`, que publica `dist/` como site estático. R
 
 1. No Cloudflare, conecte o repositório em Workers & Pages (Create, Connect to Git).
 2. Build command: `pnpm run build`. Deploy command: `npx wrangler deploy`.
-3. Variável de build: `VITE_MOCKS=on` (o app não tem back-end real). Se o build reclamar da versão do Node, use `NODE_VERSION=22`.
+3. Nenhuma variável é obrigatória: os mocks já vêm ligados. Se o build reclamar da versão do Node, use `NODE_VERSION=22`.
 4. O service worker do MSW (`mockServiceWorker.js`) é servido da raiz do site.
 
 Em Cloudflare Pages com upload direto, suba o conteúdo de `dist/` já compilado e inclua um arquivo `_redirects` com `/* /index.html 200`.

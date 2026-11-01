@@ -8,7 +8,7 @@ import './index.css';
  * a aplicação é importada dinamicamente só depois de `startMocks()`.
  */
 async function bootstrap(): Promise<void> {
-  if (import.meta.env.VITE_MOCKS === 'on') {
+  if (import.meta.env.VITE_MOCKS !== 'off') {
     const { startMocks } = await import('./mocks/browser');
     await startMocks();
   }
